@@ -18,10 +18,12 @@ class Experiment:
     def __init__(self, testSubjectName):
         self.knn = 10
 
+        self.testSubjectName = testSubjectName
+
         testSubjectMeditation = pd.read_csv(
-            testSubjectName+r"_meditation.csv", sep=';')
+            self.testSubjectName+r"_meditation.csv", sep=';')
         testSubjectAttention = pd.read_csv(
-            testSubjectName+r'_attention.csv', sep=';')
+            self.testSubjectName+r'_attention.csv', sep=';')
 
         lesserSize = min(len(testSubjectMeditation), len(testSubjectAttention))
 
@@ -57,11 +59,11 @@ class Experiment:
         prevPacketContext = str(pristinePacketContext[0])
 
         self.contextMarkers = []
-        contextTimeZones = []
+        self.contextTimeZones = []
         for i in range(0,countOfRowsAttention):
             if pristinePacketContext[i] != prevPacketContext:
                 self.contextMarkers.append(100)
-                contextTimeZones.append(prevPacketContext)
+                self.contextTimeZones.append(prevPacketContext)
             else:        
                 self.contextMarkers.append(0)
             prevPacketContext = pristinePacketContext[i]
@@ -121,24 +123,24 @@ class Experiment:
 
         return approxdList
 
-    def Plot():
+    def Plot(self):
         plt.clf()
         plt.plot(self.experimentTimeRelative,self.contextMarkers)
         plt.plot(self.experimentTimeRelative,self.listOfMeditation,label="ESenseMeditation")
         plt.plot(self.experimentTimeRelative,self.listOfConcentration,label="ESenseAttention")
         plt.grid(True)
-        titleString = "Испытуемый: " + testSubjectName + '\n' + "Зависимость уровня Esense от времени "
+        titleString = "Испытуемый: " + self.testSubjectName + '\n' + "Зависимость уровня Esense от времени "
         plt.title(titleString)
         plt.legend()
         # plt.show()
         contextString = ""
-        for contex in contextTimeZones:
+        for contex in self.contextTimeZones:
             contextString += contex[:8] + ";"
 
         plt.text(0,0,contextString)
-        plt.savefig(testSubjectName + "_график")
+        plt.savefig(self.testSubjectName + "_график")
 
-        with open(F"{testSubjectName}_contexts.txt", "w") as output:
-            output.write(str(contextTimeZones))
+        with open(F"{self.testSubjectName}_contexts.txt", "w") as output:
+            output.write(str(self.contextTimeZones))
 
 

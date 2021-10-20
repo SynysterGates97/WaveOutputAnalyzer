@@ -52,7 +52,8 @@ def main():
         for meditationFileName in meditationFilesNamesList:
             if IsMeditationFileHaveMateFile(meditationFileName):
                 testSubjectName = GetTestSubjectNameFromFile(meditationFileName)
-                experimnent = Experiment.Experiment(testSubjectName)     
+                experimnent = Experiment.Experiment(testSubjectName)    
+                experimnent.Plot() 
 
 
 def plot_graph(testSubjectName,knn):
