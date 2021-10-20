@@ -13,6 +13,8 @@ import warnings
 import numpy as np
 warnings.warn("deprecated", DeprecationWarning)
 
+import Experiment
+
 meditationFilesNamesList = glob.glob('*_meditation.csv')
 attentionFilesNamesList = glob.glob('*_attention.csv')
 
@@ -49,37 +51,9 @@ def main():
     if len(meditationFilesNamesList) > 0:
         for meditationFileName in meditationFilesNamesList:
             if IsMeditationFileHaveMateFile(meditationFileName):
-                SavePlot(GetTestSubjectNameFromFile(meditationFileName))
+                testSubjectName = GetTestSubjectNameFromFile(meditationFileName)
+                experimnent = Experiment.Experiment(testSubjectName)     
 
-def knn_regression_approx(listOfESenseValues, knn):
-    listSize = len(listOfESenseValues)
-    delta = int(knn/2)
-    leftApproxBorder = delta
-    rightApproxBorder = listSize - delta
-    #Обработка нулевых данных
-    for i in range(listSize):
-        if listOfESenseValues[i] == 0:
-            for replaceValue in listOfESenseValues[i:]:
-                if replaceValue != 0:
-                    listOfESenseValues[i] = replaceValue
-                    print(i,replaceValue)
-                    break
-    
-    approxdList = listOfESenseValues
-    
-    #Усреднение методом ближайших соседей
-    for i in range(0,listSize):
-        currentMean = 0
-        if i < leftApproxBorder:
-            currentMean = matStat.mean(listOfESenseValues[i:i+int(delta/2)])
-        elif i >= rightApproxBorder:
-            currentMean = matStat.mean(listOfESenseValues[i-int(delta/2):i])
-        else:
-            currentMean = matStat.mean(listOfESenseValues[i-delta:i+delta])
-            
-        approxdList[i]=int(currentMean)                  
-                
-    return approxdList
 
 def plot_graph(testSubjectName,knn):
     testSubjectName = testSubjectName
@@ -170,5 +144,4 @@ def plot_graph(testSubjectName,knn):
  
 
 main()
-
-import time
+print("dead")
