@@ -49,6 +49,7 @@ def main():
                 testSubjectName = GetTestSubjectNameFromFile(meditationFileName)
                 experimnent = Experiment.Experiment(testSubjectName)    
                 experimnent.Plot() 
+                experimnent.CalculateZonesMeans()
 
 main()
 print("Success!")
