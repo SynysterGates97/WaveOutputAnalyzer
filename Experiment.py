@@ -66,6 +66,8 @@ class Experiment:
                 self.contextTimeZones.append(prevPacketContext)
             else:        
                 self.contextMarkers.append(0)
+            if i == countOfRowsAttention - 1:
+                self.contextTimeZones.append(prevPacketContext)
             prevPacketContext = pristinePacketContext[i]
 
         # Пересчёт времени из абс в относит

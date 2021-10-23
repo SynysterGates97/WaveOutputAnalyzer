@@ -51,4 +51,4 @@ def main():
                 experimnent.Plot() 
 
 main()
-print("dead")
+print("Success!")
