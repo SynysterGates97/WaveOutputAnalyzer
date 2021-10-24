@@ -190,6 +190,39 @@ class Experiment:
             # testSubjectMeditation["ParseTime"][i] = minutesFromExperimentBegining
 
 
+    def WriteOutputToCsv(self):
+
+        headerStrng = "Испытуемый;" + \
+            "сред.медит;сред.вним;" + \
+                 ";СКО.медит;СКО.вним;"
+
+        valuesString = F"{self.testSubjectName};" + \
+            F"{self.entireMean[0]};{self.entireMean[1]};" + \
+                 F"{self.entireStandartDeviation[0]};{self.entireStandartDeviation[1]};"
+
+        for i in range(len(self.contextTimeZonesStr)):
+            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_сред.мед;{self.contextTimeZonesStr[i][:8]}_сред.вним;"
+            valuesString += F"{self.contextZonesMean[i][0]};{self.contextZonesMean[i][1]};"
+
+            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_макс.мед;{self.contextTimeZonesStr[i][:8]}_макс.вним;"
+            valuesString += F"{self.contextZonesMax[i][0]};{self.contextZonesMax[i][1]};"
+
+            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_мин.мед;{self.contextTimeZonesStr[i][:8]}_мин.вним;"
+            valuesString += F"{self.contextZonesMin[i][0]};{self.contextZonesMin[i][1]};"
+
+            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_СКО.мед;{self.contextTimeZonesStr[i][:8]}_СКО.вним;"
+            valuesString += F"{self.contextZonesStandartDeviation[i][0]};{self.contextZonesStandartDeviation[i][1]};"
+        
+        with open(F"{self.testSubjectName}_stat.csv", "w") as output:
+            output.write(headerStrng)
+            output.write("")
+            output.write(valuesString)
+
+
+
+
+
+
     def __KnnRegressionApprox(self, listOfESenseValues, knn):
 
         listSize = len(listOfESenseValues)
@@ -305,10 +338,6 @@ class Experiment:
 
         #         meditationZonesMean.append(np.mean(meditationCut))
         #         attentionZonesMean.append(np.mean(attentionCut))
-
-
-
-
         
     def Plot(self):
 

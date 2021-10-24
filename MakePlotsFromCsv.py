@@ -50,6 +50,7 @@ def main():
                 experimnent = Experiment.Experiment(testSubjectName)    
                 experimnent.Plot() 
                 experimnent.CalculateZonesMeans()
+                experimnent.WriteOutputToCsv()
                 
 
 main()
