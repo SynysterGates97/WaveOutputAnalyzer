@@ -18,7 +18,6 @@ import re
 import warnings
 
 import numpy as np
-# import SortedDict
 
 warnings.warn("deprecated", DeprecationWarning)
 
@@ -99,10 +98,8 @@ class Experiment:
             testSubjectAttention['ParseTime'][i] = onlyTimeString
 
 
-        # self.listOfMeditation = self.__KnnRegressionApprox(pristineMeditation, self.knn)
-        # self.listOfConcentration = self.__KnnRegressionApprox(pristineAttention, self.knn)
-        self.listOfMeditation = pristineMeditation
-        self.listOfConcentration = pristineAttention
+        self.listOfMeditation = self.__KnnRegressionApprox(pristineMeditation, self.knn)
+        self.listOfConcentration = self.__KnnRegressionApprox(pristineAttention, self.knn)
         
         pristinePacketContext = testSubjectMeditation['PacketContext']
 
@@ -194,7 +191,7 @@ class Experiment:
     def WriteOutputToCsv(self):
 
         dataToCsv = {'Испытуемый': self.testSubjectName,
-                'сред.медит': int(self.entireMean[0]),
+                'сред.мед': int(self.entireMean[0]),
                 'сред.вним': int(self.entireMean[1]),
                 'СКО.меди': int(self.entireStandartDeviation[0]),
                 'СКО.вним': int(self.entireStandartDeviation[1])}
@@ -204,7 +201,10 @@ class Experiment:
         for i in range(len(self.contextTimeZonesStr)):
 
             dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_сред.мед"] = int(self.contextZonesMean[i][0])
-            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_макс.мед"] = int(self.contextZonesMax[i][1])
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_сред.вним"] = int(self.contextZonesMean[i][1])
+            
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_макс.мед"] = int(self.contextZonesMax[i][0])
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_макс.вним"] = int(self.contextZonesMax[i][1])
 
             dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_мин.мед"] = int(self.contextZonesMin[i][0])
             dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_мин.вним"] = int(self.contextZonesMin[i][1])
