@@ -18,6 +18,7 @@ import re
 import warnings
 
 import numpy as np
+# import SortedDict
 
 warnings.warn("deprecated", DeprecationWarning)
 
@@ -192,36 +193,28 @@ class Experiment:
 
     def WriteOutputToCsv(self):
 
-        headerStrng = "Испытуемый;" + \
-            "сред.медит;сред.вним;" + \
-                 ";СКО.медит;СКО.вним;"
+        dataToCsv = {'Испытуемый': self.testSubjectName,
+                'сред.медит': int(self.entireMean[0]),
+                'сред.вним': int(self.entireMean[1]),
+                'СКО.меди': int(self.entireStandartDeviation[0]),
+                'СКО.вним': int(self.entireStandartDeviation[1])}
+        
 
-        valuesString = F"{self.testSubjectName};" + \
-            F"{self.entireMean[0]};{self.entireMean[1]};" + \
-                 F"{self.entireStandartDeviation[0]};{self.entireStandartDeviation[1]};"
 
         for i in range(len(self.contextTimeZonesStr)):
-            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_сред.мед;{self.contextTimeZonesStr[i][:8]}_сред.вним;"
-            valuesString += F"{self.contextZonesMean[i][0]};{self.contextZonesMean[i][1]};"
 
-            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_макс.мед;{self.contextTimeZonesStr[i][:8]}_макс.вним;"
-            valuesString += F"{self.contextZonesMax[i][0]};{self.contextZonesMax[i][1]};"
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_сред.мед"] = int(self.contextZonesMean[i][0])
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_макс.мед"] = int(self.contextZonesMax[i][1])
 
-            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_мин.мед;{self.contextTimeZonesStr[i][:8]}_мин.вним;"
-            valuesString += F"{self.contextZonesMin[i][0]};{self.contextZonesMin[i][1]};"
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_мин.мед"] = int(self.contextZonesMin[i][0])
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_мин.вним"] = int(self.contextZonesMin[i][1])
 
-            headerStrng += F"{self.contextTimeZonesStr[i][:8]}_СКО.мед;{self.contextTimeZonesStr[i][:8]}_СКО.вним;"
-            valuesString += F"{self.contextZonesStandartDeviation[i][0]};{self.contextZonesStandartDeviation[i][1]};"
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_СКО.мед"] = int(self.contextZonesStandartDeviation[i][0])
+            dataToCsv[F"{self.contextTimeZonesStr[i][:8]}_СКО.вним"] = int(self.contextZonesStandartDeviation[i][1])
         
-        with open(F"{self.testSubjectName}_stat.csv", "w") as output:
-            output.write(headerStrng)
-            output.write("")
-            output.write(valuesString)
-
-
-
-
-
+        dfOutputStat = pd.DataFrame(data = dataToCsv, index=[0])
+        
+        dfOutputStat.to_csv(F"{self.testSubjectName}_stat.csv", sep=";")
 
     def __KnnRegressionApprox(self, listOfESenseValues, knn):
 
