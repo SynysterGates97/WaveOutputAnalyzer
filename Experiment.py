@@ -35,6 +35,14 @@ class Experiment:
         self.contextTimeZonesStr = []
         self.contextEndCoordinateWithContextIndex = []        
         self.experimentTimeRelative= []
+        
+        self.entireMean = ()
+        self.entireStandartDeviation = ()
+        self.contextZonesStandartDeviation = []
+
+        self.contextZonesMean = []
+        self.contextZonesMax = []
+        self.contextZonesMin = []
 
         testSubjectMeditation = pd.read_csv(
 
@@ -93,7 +101,6 @@ class Experiment:
         self.listOfMeditation = self.__KnnRegressionApprox(pristineMeditation, self.knn)
         self.listOfConcentration = self.__KnnRegressionApprox(pristineAttention, self.knn)
         
-
         pristinePacketContext = testSubjectMeditation['PacketContext']
 
         prevPacketContext = str(pristinePacketContext[0])
@@ -123,6 +130,24 @@ class Experiment:
 
             prevPacketContext = pristinePacketContext[i]
 
+        meditationMean = np.mean(self.listOfMeditation)     #
+        attentionMean = np.mean(self.listOfConcentration)   #
+
+        self.entireMean = (meditationMean, attentionMean)
+
+        secondCenterMoments = [0,0]
+        for i in range(0,len(self.listOfMeditation)):
+            meditationSecondCenterMoment = (self.listOfMeditation[i] - self.entireMean[0])**2
+            attentionSecondCenterMoment = (self.listOfConcentration[i] - self.entireMean[1])**2
+
+            secondCenterMoments[0] += meditationSecondCenterMoment
+            secondCenterMoments[1] += attentionSecondCenterMoment
+
+        self.entireStandartDeviation = (
+            (secondCenterMoments[0]/len(self.listOfMeditation))**0.5,
+            (secondCenterMoments[1]/len(self.listOfConcentration))**0.5
+            )
+        self.contextZonesStandartDeviation = []
 
         # Пересчёт времени из абс в относит
 
@@ -221,13 +246,8 @@ class Experiment:
         return approxdList
 
     def CalculateZonesMeans(self):
-        meditationMean = np.mean(self.listOfMeditation)
-        attentionMean = np.mean(self.listOfConcentration)
-
-        meditationZonesMean = []
-        attentionZonesMean = []
-
         contextZoneCount = len(self.contextEndCoordinateWithContextIndex)
+
         for i in range(0, contextZoneCount):
             endOfZone = 0
             beginOfZone = 0
@@ -242,11 +262,11 @@ class Experiment:
             meditationCut = self.listOfMeditation[beginOfZone:endOfZone]
             attentionCut = self.listOfConcentration[beginOfZone:endOfZone]
             
-            meditationZonesMean.append(np.mean(meditationCut))
-            attentionZonesMean.append(np.mean(attentionCut))
+            self.contextZonesMean.append((np.mean(meditationCut),np.mean(attentionCut)))
+            self.contextZonesMax.append((np.max(meditationCut),np.max(attentionCut)))
+            self.contextZonesMin.append((np.min(meditationCut),np.min(attentionCut)))
 
-        print(meditationZonesMean)
-        print(attentionZonesMean)
+        print(self.contextZonesMean)
 
         # for endCoordinateContext in self.contextEndCoordinateWithContextIndex:
         #     if endCoordinateContext[1] == 0:
