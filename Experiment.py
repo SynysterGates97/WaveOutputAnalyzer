@@ -98,8 +98,10 @@ class Experiment:
             testSubjectAttention['ParseTime'][i] = onlyTimeString
 
 
-        self.listOfMeditation = self.__KnnRegressionApprox(pristineMeditation, self.knn)
-        self.listOfConcentration = self.__KnnRegressionApprox(pristineAttention, self.knn)
+        # self.listOfMeditation = self.__KnnRegressionApprox(pristineMeditation, self.knn)
+        # self.listOfConcentration = self.__KnnRegressionApprox(pristineAttention, self.knn)
+        self.listOfMeditation = pristineMeditation
+        self.listOfConcentration = pristineAttention
         
         pristinePacketContext = testSubjectMeditation['PacketContext']
 
@@ -147,6 +149,7 @@ class Experiment:
             (secondCenterMoments[0]/len(self.listOfMeditation))**0.5,
             (secondCenterMoments[1]/len(self.listOfConcentration))**0.5
             )
+
         self.contextZonesStandartDeviation = []
 
         # Пересчёт времени из абс в относит
@@ -265,6 +268,23 @@ class Experiment:
             self.contextZonesMean.append((np.mean(meditationCut),np.mean(attentionCut)))
             self.contextZonesMax.append((np.max(meditationCut),np.max(attentionCut)))
             self.contextZonesMin.append((np.min(meditationCut),np.min(attentionCut)))
+            
+            secondCenterMoments = [0,0]
+            for j in range(beginOfZone,endOfZone):
+                meditationSecondCenterMoment = (self.listOfMeditation[j] - self.contextZonesMean[i][0])**2
+                attentionSecondCenterMoment = (self.listOfConcentration[j] - self.contextZonesMean[i][1])**2
+
+                secondCenterMoments[0] += meditationSecondCenterMoment
+                secondCenterMoments[1] += attentionSecondCenterMoment
+
+            self.contextZonesStandartDeviation.append(
+                (
+                    (secondCenterMoments[0]/ (endOfZone - beginOfZone))**0.5,
+                    (secondCenterMoments[1]/ (endOfZone - beginOfZone))**0.5
+                )
+            )
+            
+                    
 
         print(self.contextZonesMean)
 
